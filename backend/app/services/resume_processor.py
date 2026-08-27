@@ -5,33 +5,58 @@ SECTION_ALIASES = {
     "summary": {
         "summary",
         "professional summary",
+        "professional profile",
         "profile",
+        "career summary",
+        "career objective",
         "objective",
+        "about me",
     },
     "education": {
         "education",
+        "educational background",
         "academic background",
+        "academic qualifications",
+        "qualifications",
+        "academic history",
     },
     "skills": {
         "skills",
         "technical skills",
+        "technical skill",
         "core skills",
+        "core competencies",
         "technical expertise",
+        "technical proficiencies",
+        "technologies",
+        "technology stack",
+        "skills and technologies",
     },
     "experience": {
         "experience",
         "work experience",
         "professional experience",
+        "work history",
         "employment history",
+        "professional history",
+        "career history",
     },
     "projects": {
         "projects",
+        "project",
         "personal projects",
         "academic projects",
+        "professional projects",
+        "key projects",
+        "selected projects",
     },
     "certifications": {
         "certifications",
+        "certification",
         "certificates",
+        "courses and certifications",
+        "certifications and courses",
+        "professional certifications",
     },
 }
 
@@ -67,7 +92,9 @@ def normalize_text(text: str) -> str:
 
 def detect_section(line: str) -> str | None:
     """Identify whether a line represents a known resume section."""
-    normalized_line = re.sub(r"[^a-zA-Z ]", "", line).strip().lower()
+    normalized_line = re.sub(r"[^a-zA-Z ]", " ", line)
+    normalized_line = re.sub(r"\s+", " ", normalized_line)
+    normalized_line = normalized_line.strip().lower()
 
     for section, aliases in SECTION_ALIASES.items():
         if normalized_line in aliases:
@@ -99,8 +126,18 @@ def extract_sections(text: str) -> dict[str, list[str]]:
     return sections
 
 
+def normalize_url(url: str) -> str:
+    """Normalize social profile URLs to a consistent format."""
+    url = url.strip()
+
+    if not url.startswith(("http://", "https://")):
+        return f"https://{url}"
+
+    return url
+
+
 def extract_contact_info(text: str) -> dict[str, str | None]:
-    """Extract common contact details from resume text."""
+    """Extract and normalize common contact details from resume text."""
     contact = {
         "email": None,
         "phone": None,
@@ -111,8 +148,15 @@ def extract_contact_info(text: str) -> dict[str, str | None]:
     for field, pattern in CONTACT_PATTERNS.items():
         match = pattern.search(text)
 
-        if match:
-            contact[field] = match.group(0)
+        if not match:
+            continue
+
+        value = match.group(0)
+
+        if field in {"linkedin", "github"}:
+            value = normalize_url(value)
+
+        contact[field] = value
 
     return contact
 
