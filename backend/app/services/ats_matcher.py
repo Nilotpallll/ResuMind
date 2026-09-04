@@ -1,11 +1,13 @@
 from app.services.ats_analyzer import _normalize_skill
 
 
-def _normalize_items(items: list[str]) -> set[str]:
+def _normalize_items(
+    items: list[str],
+) -> set[str]:
     """
-    Normalize a collection of skills or keywords for comparison.
+    Normalize a collection of skills or keywords
+    for comparison.
     """
-
     normalized = set()
 
     for item in items:
@@ -17,7 +19,9 @@ def _normalize_items(items: list[str]) -> set[str]:
         if not value:
             continue
 
-        normalized.add(_normalize_skill(value))
+        normalized.add(
+            _normalize_skill(value)
+        )
 
     return normalized
 
@@ -29,11 +33,12 @@ def _calculate_percentage(
     """
     Calculate a percentage safely.
     """
-
     if required <= 0:
         return 0
 
-    return round((matched / required) * 100)
+    return round(
+        (matched / required) * 100
+    )
 
 
 def compare_skills(
@@ -43,12 +48,21 @@ def compare_skills(
     """
     Compare resume skills against required job skills.
     """
+    resume_set = _normalize_items(
+        resume_skills
+    )
 
-    resume_set = _normalize_items(resume_skills)
-    job_set = _normalize_items(job_skills)
+    job_set = _normalize_items(
+        job_skills
+    )
 
-    matched = sorted(resume_set & job_set)
-    missing = sorted(job_set - resume_set)
+    matched = sorted(
+        resume_set & job_set
+    )
+
+    missing = sorted(
+        job_set - resume_set
+    )
 
     match_percentage = _calculate_percentage(
         len(matched),
@@ -69,14 +83,24 @@ def compare_keywords(
     job_keywords: list[str],
 ) -> dict:
     """
-    Compare resume keywords against job-description keywords.
+    Compare resume keywords against
+    job-description keywords.
     """
+    resume_set = _normalize_items(
+        resume_keywords
+    )
 
-    resume_set = _normalize_items(resume_keywords)
-    job_set = _normalize_items(job_keywords)
+    job_set = _normalize_items(
+        job_keywords
+    )
 
-    matched = sorted(resume_set & job_set)
-    missing = sorted(job_set - resume_set)
+    matched = sorted(
+        resume_set & job_set
+    )
+
+    missing = sorted(
+        job_set - resume_set
+    )
 
     match_percentage = _calculate_percentage(
         len(matched),
@@ -101,7 +125,6 @@ def calculate_ats_score(
 
     Skills receive 60% weight and keywords receive 40%.
     """
-
     score = (
         (skill_match * 0.60)
         + (keyword_match * 0.40)
@@ -120,22 +143,32 @@ def generate_recommendations(
     Recommendations never instruct the candidate to claim
     experience they do not have.
     """
-
     recommendations = []
+
+    normalized_missing_skills = {
+        skill.strip().lower()
+        for skill in missing_skills
+        if skill and skill.strip()
+    }
 
     for skill in missing_skills[:5]:
         recommendations.append(
-            f"Consider adding '{skill}' if you have relevant "
-            "experience or practical knowledge."
+            f"Consider adding '{skill}' if you have relevant experience "
+            f"or practical knowledge."
         )
 
     for keyword in missing_keywords[:5]:
-        if keyword in missing_skills:
+        normalized_keyword = keyword.strip().lower()
+
+        if not normalized_keyword:
+            continue
+
+        if normalized_keyword in normalized_missing_skills:
             continue
 
         recommendations.append(
-            f"Consider mentioning '{keyword}' where it "
-            "accurately reflects your experience."
+            f"Consider mentioning '{keyword}' where it accurately "
+            f"reflects your experience."
         )
 
     if not recommendations:
@@ -155,7 +188,6 @@ def match_resume_to_job(
     Compare resume NLP analysis against job-description NLP
     analysis and produce ATS compatibility results.
     """
-
     if not resume_analysis:
         resume_analysis = {}
 

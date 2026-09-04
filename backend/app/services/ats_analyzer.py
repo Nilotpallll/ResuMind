@@ -129,6 +129,8 @@ NLP_EXCLUDED_KEYWORDS = {
     "resume",
     "curriculum",
     "vitae",
+    "description",
+    "sample",
     "experience",
     "experiences",
     "education",

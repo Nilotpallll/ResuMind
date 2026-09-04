@@ -6,7 +6,10 @@ from werkzeug.utils import secure_filename
 
 from app.services.ats_analyzer import analyze_resume
 from app.services.ats_matcher import match_resume_to_job
-from app.services.job_description_analyzer import analyze_job_description
+from app.services.feedback_generator import generate_feedback
+from app.services.job_description_analyzer import (
+    analyze_job_description,
+)
 from app.services.resume_parser import extract_resume_text
 from app.services.resume_processor import process_resume
 from app.services.resume_scorer import score_resume
@@ -100,11 +103,17 @@ def upload_resume():
                 "phrase_count": job_nlp["phrase_count"],
             }
 
+        feedback = generate_feedback(
+            analysis,
+            ats_analysis,
+        )
+
         response = {
             "message": "Resume processed successfully",
             "filename": file.filename,
             "resume": resume_data,
             "analysis": analysis,
+            "feedback": feedback,
         }
 
         if ats_analysis is not None:
