@@ -1,0 +1,15 @@
+We are looking for a Python Full Stack Developer.
+
+Requirements:
+- Strong Python programming skills
+- Experience with Flask or FastAPI
+- Experience building REST APIs
+- React and JavaScript knowledge
+- PostgreSQL or MySQL
+- Docker
+- Git and GitHub
+- AWS cloud experience
+- CI/CD pipelines
+- Strong problem solving and communication skills
+
+The candidate should have experience developing scalable web applications and working with databases and cloud technologies.
