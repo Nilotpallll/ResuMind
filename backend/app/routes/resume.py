@@ -4,6 +4,8 @@ from uuid import uuid4
 from flask import Blueprint, current_app, jsonify, request
 from werkzeug.utils import secure_filename
 
+from app.extensions import db
+from app.models import Analysis
 from app.services.ats_analyzer import analyze_resume
 from app.services.ats_matcher import match_resume_to_job
 from app.services.feedback_generator import generate_feedback
@@ -108,6 +110,29 @@ def upload_resume():
             ats_analysis,
         )
 
+        database_analysis = Analysis(
+            filename=file.filename,
+            overall_score=analysis.get(
+                "overall_score",
+                0,
+            ),
+            ats_score=(
+                ats_analysis.get("ats_score")
+                if ats_analysis
+                else None
+            ),
+            resume_data=resume_data,
+            score_breakdown=analysis,
+            ats_data=ats_analysis,
+            feedback=feedback,
+        )
+
+        db.session.add(
+            database_analysis
+        )
+
+        db.session.commit()
+
         response = {
             "message": "Resume processed successfully",
             "filename": file.filename,
@@ -122,6 +147,8 @@ def upload_resume():
         return jsonify(response)
 
     except Exception:
+        db.session.rollback()
+
         current_app.logger.exception(
             "Resume processing failed"
         )
