@@ -1,4 +1,7 @@
+# =========================================================
 # Python
+# =========================================================
+
 __pycache__/
 *.py[cod]
 *.pyo
@@ -8,47 +11,65 @@ venv/
 .venv/
 env/
 
+# =========================================================
 # Environment variables
+# =========================================================
+
 .env
 .env.*
+!.env.example
 
-# Node
-node_modules/
-dist/
+# =========================================================
+# Python / Flask runtime files
+# =========================================================
 
-# IDE
-.vscode/
-.idea/
+*.db
+*.sqlite
+*.sqlite3
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Uploaded files
 backend/uploads/
 
-# Logs
-logs
+logs/
 *.log
+
+# =========================================================
+# Node / Frontend
+# =========================================================
+
+node_modules/
+dist/
+dist-ssr/
+
+*.local
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# =========================================================
+# IDE / Editor
+# =========================================================
 
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+
+.idea/
+
+# =========================================================
+# Operating System
+# =========================================================
+
 .DS_Store
+Thumbs.db
+
+# =========================================================
+# Visual Studio / Windows
+# =========================================================
+
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
